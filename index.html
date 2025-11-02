@@ -1,0 +1,2816 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Label Prestige - Site Officiel</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/ScrollTrigger.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tsparticles/2.9.3/tsparticles.min.js"></script>
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-storage-compat.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --gold-primary: #D4AF37;
+            --gold-secondary: #F5E8B0;
+            --gold-dark: #B8860B;
+            --white: #FFFFFF;
+            --off-white: #F8F8F8;
+            --dark-bg: #0A0A0A;
+            --card-bg: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(212, 175, 55, 0.2);
+            --text-primary: #F0F0F0;
+            --text-secondary: #B0B0B0;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: var(--dark-bg);
+            color: var(--text-primary);
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(212, 175, 55, 0.05) 0%, transparent 20%),
+                radial-gradient(circle at 90% 80%, rgba(212, 175, 55, 0.03) 0%, transparent 20%);
+        }
+
+        #three-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+
+        .luxury-header {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+            background: rgba(10, 10, 10, 0.9);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--glass-border);
+            padding: 1.5rem 3rem;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .logo-3d {
+            width: 80px;
+            height: 80px;
+            position: relative;
+            transform-style: preserve-3d;
+            animation: floatLogo 6s ease-in-out infinite;
+        }
+
+        .logo-3d img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            filter: drop-shadow(0 0 20px var(--gold-primary));
+        }
+
+        .logo-text {
+            font-family: 'Cinzel', serif;
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--gold-primary), var(--gold-secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 30px rgba(212, 175, 55, 0.3);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--text-primary);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            position: relative;
+            padding: 0.5rem 1rem;
+        }
+
+        .nav-links a::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--gold-primary), var(--gold-secondary));
+            transition: width 0.3s ease;
+        }
+
+        .nav-links a:hover::before {
+            width: 100%;
+        }
+
+        .nav-links a:hover {
+            color: var(--gold-secondary);
+        }
+
+        .hero-section {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            padding: 0 2rem;
+        }
+
+        .hero-content {
+            text-align: center;
+            z-index: 10;
+            max-width: 1200px;
+        }
+
+        .hero-title {
+            font-family: 'Cinzel', serif;
+            font-size: 5rem;
+            font-weight: 900;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(135deg, var(--gold-primary), var(--gold-secondary), var(--gold-primary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 50px rgba(212, 175, 55, 0.5);
+            animation: titleGlow 3s ease-in-out infinite alternate;
+        }
+
+        .hero-subtitle {
+            font-size: 1.5rem;
+            color: var(--text-secondary);
+            margin-bottom: 3rem;
+            font-weight: 300;
+            letter-spacing: 2px;
+        }
+
+        .cta-button {
+            background: linear-gradient(135deg, var(--gold-primary), var(--gold-dark));
+            color: white;
+            border: none;
+            padding: 1.2rem 3rem;
+            border-radius: 50px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(212, 175, 55, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .cta-button:hover::before {
+            left: 100%;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(212, 175, 55, 0.5);
+        }
+
+        .section {
+            padding: 6rem 2rem;
+            position: relative;
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 4rem;
+            font-family: 'Cinzel', serif;
+            font-size: 3rem;
+            color: var(--gold-secondary);
+        }
+
+        .history-content {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: var(--card-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 3rem;
+            backdrop-filter: blur(10px);
+        }
+
+        .history-text {
+            font-size: 1.2rem;
+            line-height: 1.8;
+            color: var(--text-secondary);
+            text-align: justify;
+        }
+
+        /* Section Suggestions */
+        .suggestions-section {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .suggestions-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+        }
+
+        @media (max-width: 968px) {
+            .suggestions-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .suggestion-form-container {
+            background: var(--card-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 2.5rem;
+            backdrop-filter: blur(10px);
+            transition: all 0.4s ease;
+        }
+
+        .suggestion-form-container:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(212, 175, 55, 0.2);
+            border-color: var(--gold-primary);
+        }
+
+        .suggestion-form-title {
+            font-family: 'Cinzel', serif;
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+            color: var(--gold-secondary);
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+
+        .suggestion-form {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            color: var(--text-primary);
+            font-size: 0.95rem;
+        }
+
+        .form-control {
+            padding: 0.8rem 1rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--glass-border);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-size: 1rem;
+            font-family: 'Inter', sans-serif;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--gold-primary);
+            box-shadow: 0 0 0 2px rgba(212, 175, 55, 0.2);
+        }
+
+        textarea.form-control {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        .form-control::placeholder {
+            color: var(--text-secondary);
+            opacity: 0.7;
+        }
+
+        .suggestion-preview {
+            background: var(--card-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 2.5rem;
+            backdrop-filter: blur(10px);
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .suggestion-preview:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(212, 175, 55, 0.2);
+            border-color: var(--gold-primary);
+        }
+
+        .preview-title {
+            font-family: 'Cinzel', serif;
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+            color: var(--gold-secondary);
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+
+        .preview-content {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            border: 1px solid var(--glass-border);
+            min-height: 200px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .preview-placeholder {
+            text-align: center;
+            color: var(--text-secondary);
+            font-style: italic;
+        }
+
+        .preview-meta {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        .preview-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .btn {
+            padding: 0.8rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            font-family: 'Inter', sans-serif;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--gold-primary), var(--gold-dark));
+            color: white;
+            box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(212, 175, 55, 0.4);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-primary);
+            border: 1px solid var(--glass-border);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.08);
+            transform: translateY(-2px);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        .suggestions-dashboard {
+            display: none;
+            margin-top: 3rem;
+            background: var(--card-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 2.5rem;
+            backdrop-filter: blur(10px);
+        }
+
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .dashboard-title {
+            font-family: 'Cinzel', serif;
+            font-size: 1.8rem;
+            color: var(--gold-secondary);
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+
+        .dashboard-stats {
+            display: flex;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .stat-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 10px;
+            min-width: 100px;
+        }
+
+        .stat-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--gold-primary);
+        }
+
+        .stat-label {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-top: 0.3rem;
+        }
+
+        .suggestions-filters {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 0.5rem 1rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--glass-border);
+            border-radius: 6px;
+            color: var(--text-primary);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .filter-btn.active {
+            background: rgba(212, 175, 55, 0.15);
+            color: var(--gold-secondary);
+            border-color: var(--gold-primary);
+        }
+
+        .filter-btn:hover:not(.active) {
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .suggestions-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            max-height: 500px;
+            overflow-y: auto;
+            padding-right: 0.5rem;
+        }
+
+        .suggestions-list::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .suggestions-list::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 3px;
+        }
+
+        .suggestions-list::-webkit-scrollbar-thumb {
+            background: var(--gold-primary);
+            border-radius: 3px;
+        }
+
+        .suggestion-item {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .suggestion-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(212, 175, 55, 0.1);
+            border-color: var(--gold-primary);
+        }
+
+        .suggestion-item.unread {
+            border-left: 4px solid var(--gold-primary);
+        }
+
+        .suggestion-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+
+        .suggestion-date {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        .suggestion-category {
+            display: inline-block;
+            padding: 0.3rem 0.8rem;
+            background: rgba(212, 175, 55, 0.1);
+            color: var(--gold-primary);
+            border-radius: 20px;
+            font-size: 0.8rem;
+            margin-bottom: 0.8rem;
+        }
+
+        .suggestion-content {
+            color: var(--text-primary);
+            line-height: 1.5;
+            margin-bottom: 1rem;
+        }
+
+        .suggestion-actions {
+            display: flex;
+            gap: 0.5rem;
+            justify-content: flex-end;
+        }
+
+        .action-btn {
+            padding: 0.4rem 0.8rem;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .action-btn.mark-read {
+            background: rgba(76, 175, 80, 0.1);
+            color: #4CAF50;
+            border: 1px solid rgba(76, 175, 80, 0.3);
+        }
+
+        .action-btn.mark-read:hover {
+            background: rgba(76, 175, 80, 0.2);
+        }
+
+        .action-btn.delete {
+            background: rgba(244, 67, 54, 0.1);
+            color: #F44336;
+            border: 1px solid rgba(244, 67, 54, 0.3);
+        }
+
+        .action-btn.delete:hover {
+            background: rgba(244, 67, 54, 0.2);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: var(--text-secondary);
+        }
+
+        .empty-state-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        /* Reste des styles */
+        .activities-section {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .roadmap {
+            max-width: 1200px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .roadmap::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 4px;
+            height: 100%;
+            background: linear-gradient(to bottom, var(--gold-primary), var(--gold-dark));
+            border-radius: 2px;
+        }
+
+        .roadmap-item {
+            width: calc(50% - 3rem);
+            margin-bottom: 4rem;
+            position: relative;
+        }
+
+        .roadmap-item:nth-child(odd) {
+            margin-left: 0;
+            margin-right: auto;
+            padding-right: 3rem;
+        }
+
+        .roadmap-item:nth-child(even) {
+            margin-left: auto;
+            margin-right: 0;
+            padding-left: 3rem;
+        }
+
+        .roadmarker {
+            position: absolute;
+            top: 0;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--gold-primary);
+            box-shadow: 0 0 20px rgba(212, 175, 55, 0.8);
+        }
+
+        .roadmap-item:nth-child(odd) .roadmarker {
+            right: -10px;
+        }
+
+        .roadmap-item:nth-child(even) .roadmarker {
+            left: -10px;
+        }
+
+        .roadmap-card {
+            background: var(--card-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 15px;
+            padding: 2rem;
+            backdrop-filter: blur(10px);
+            transition: all 0.4s ease;
+            position: relative;
+        }
+
+        .roadmap-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(212, 175, 55, 0.2);
+            border-color: var(--gold-primary);
+        }
+
+        .roadmap-date {
+            font-family: 'Cinzel', serif;
+            color: var(--gold-primary);
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+        }
+
+        .roadmap-title {
+            font-family: 'Cinzel', serif;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: var(--gold-secondary);
+        }
+
+        .roadmap-description {
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        .future-activity {
+            filter: blur(8px);
+            transition: filter 0.5s ease;
+            position: relative;
+        }
+
+        .future-activity:hover {
+            filter: blur(0);
+        }
+
+        .activity-enigma {
+            display: none;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(10, 10, 10, 0.95);
+            border-radius: 15px;
+            padding: 2rem;
+            z-index: 20;
+            text-align: center;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .future-activity:hover .activity-enigma {
+            display: flex;
+        }
+
+        .enigma-text {
+            font-family: 'Cinzel', serif;
+            font-size: 1.8rem;
+            color: var(--gold-primary);
+            margin-bottom: 1.5rem;
+            text-align: center;
+            line-height: 1.4;
+        }
+
+        .enigma-hint {
+            font-size: 1rem;
+            color: var(--text-secondary);
+            margin-top: 1rem;
+            font-style: italic;
+        }
+
+        .login-form {
+            max-width: 500px;
+            margin: 0 auto 4rem;
+            background: var(--card-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 15px;
+            padding: 2rem;
+            backdrop-filter: blur(10px);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--glass-border);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-size: 1rem;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--gold-primary);
+        }
+
+        .documents-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .document-category {
+            background: var(--card-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 15px;
+            padding: 2rem;
+            backdrop-filter: blur(10px);
+            transition: all 0.4s ease;
+            cursor: pointer;
+        }
+
+        .document-category:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(212, 175, 55, 0.2);
+            border-color: var(--gold-primary);
+        }
+
+        .category-title {
+            font-family: 'Cinzel', serif;
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            color: var(--gold-secondary);
+            text-align: center;
+        }
+
+        .subject-list {
+            list-style: none;
+        }
+
+        .subject-item {
+            padding: 0.8rem 1rem;
+            margin-bottom: 0.5rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .subject-item:hover {
+            background: rgba(212, 175, 55, 0.1);
+            transform: translateX(5px);
+        }
+
+        .library-interface {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(5, 5, 5, 0.98);
+            z-index: 2000;
+            backdrop-filter: blur(15px);
+            overflow: hidden;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .library-container {
+            display: flex;
+            height: 100%;
+            max-width: 1800px;
+            margin: 0 auto;
+            padding: 2rem;
+            gap: 2rem;
+        }
+
+        .library-sidebar {
+            width: 300px;
+            background: rgba(20, 20, 20, 0.8);
+            border-radius: 15px;
+            border: 1px solid var(--glass-border);
+            padding: 2rem;
+            backdrop-filter: blur(10px);
+            overflow-y: auto;
+        }
+
+        .library-main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: rgba(20, 20, 20, 0.8);
+            border-radius: 15px;
+            border: 1px solid var(--glass-border);
+            backdrop-filter: blur(10px);
+            overflow: hidden;
+        }
+
+        .library-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 2rem;
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .library-title {
+            font-family: 'Cinzel', serif;
+            font-size: 2.5rem;
+            color: var(--gold-secondary);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .library-path {
+            font-size: 1rem;
+            color: var(--text-secondary);
+            margin-top: 0.5rem;
+        }
+
+        .close-library {
+            background: none;
+            border: none;
+            color: var(--gold-primary);
+            font-size: 2rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+        }
+
+        .close-library:hover {
+            transform: scale(1.2);
+            background: rgba(212, 175, 55, 0.1);
+        }
+
+        .library-content {
+            flex: 1;
+            padding: 2rem;
+            overflow-y: auto;
+        }
+
+        .tree-view {
+            margin-top: 2rem;
+        }
+
+        .tree-node {
+            margin-bottom: 0.5rem;
+        }
+
+        .tree-folder {
+            padding: 0.8rem 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .tree-folder:hover {
+            background: rgba(212, 175, 55, 0.1);
+            color: var(--gold-secondary);
+        }
+
+        .tree-folder.active {
+            background: rgba(212, 175, 55, 0.15);
+            color: var(--gold-secondary);
+            border-left: 3px solid var(--gold-primary);
+        }
+
+        .tree-folder i {
+            transition: transform 0.3s ease;
+        }
+
+        .tree-folder.active i {
+            transform: rotate(90deg);
+        }
+
+        .tree-children {
+            margin-left: 1.5rem;
+            margin-top: 0.5rem;
+            display: none;
+        }
+
+        .tree-folder.active + .tree-children {
+            display: block;
+        }
+
+        .tree-item {
+            padding: 0.6rem 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            color: var(--text-secondary);
+        }
+
+        .tree-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-primary);
+        }
+
+        .tree-item.active {
+            background: rgba(212, 175, 55, 0.1);
+            color: var(--gold-secondary);
+        }
+
+        .documents-view {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .document-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .document-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(212, 175, 55, 0.15);
+            border-color: var(--gold-primary);
+        }
+
+        .document-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: var(--gold-primary);
+            text-align: center;
+        }
+
+        .document-name {
+            font-family: 'Cinzel', serif;
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+            color: var(--gold-secondary);
+            line-height: 1.3;
+        }
+
+        .document-meta {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .document-description {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            margin-bottom: 1.5rem;
+            flex: 1;
+            line-height: 1.4;
+        }
+
+        .document-actions {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: auto;
+        }
+
+        .doc-btn {
+            flex: 1;
+            padding: 0.6rem;
+            border: 1px solid var(--glass-border);
+            background: transparent;
+            color: var(--text-primary);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.8rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.3rem;
+        }
+
+        .doc-btn.primary {
+            background: linear-gradient(135deg, var(--gold-primary), var(--gold-dark));
+            border: none;
+        }
+
+        .doc-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 10px rgba(212, 175, 55, 0.2);
+        }
+
+        .upload-section {
+            margin-top: 2rem;
+            padding: 1.5rem;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 10px;
+            border: 1px dashed var(--glass-border);
+        }
+
+        .upload-title {
+            font-family: 'Cinzel', serif;
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            color: var(--gold-secondary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .upload-form {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .upload-input {
+            padding: 0.8rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--glass-border);
+            border-radius: 6px;
+            color: var(--text-primary);
+            font-size: 0.9rem;
+        }
+
+        .upload-input:focus {
+            outline: none;
+            border-color: var(--gold-primary);
+        }
+
+        .concours-section {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .concours-category {
+            margin-bottom: 4rem;
+        }
+
+        .concours-title {
+            font-family: 'Cinzel', serif;
+            font-size: 2.5rem;
+            margin-bottom: 2rem;
+            color: var(--gold-secondary);
+            text-align: center;
+        }
+
+        .concours-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 2rem;
+        }
+
+        .concours-item {
+            background: var(--card-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 15px;
+            padding: 2rem;
+            backdrop-filter: blur(10px);
+            transition: all 0.4s ease;
+        }
+
+        .concours-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(212, 175, 55, 0.2);
+            border-color: var(--gold-primary);
+        }
+
+        .concours-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .concours-logo {
+            width: 80px;
+            height: 80px;
+            margin-right: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .concours-logo img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            border-radius: 10px;
+        }
+
+        .concours-name {
+            font-family: 'Cinzel', serif;
+            font-size: 1.5rem;
+            color: var(--gold-secondary);
+        }
+
+        .concours-details {
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        .concours-details span {
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+
+        .serment-content {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: var(--card-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 3rem;
+            backdrop-filter: blur(10px);
+            text-align: center;
+        }
+
+        .payment-info {
+            margin-bottom: 2rem;
+        }
+
+        .payment-numbers {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin: 1.5rem 0;
+        }
+
+        .payment-number {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--gold-primary);
+        }
+
+        .pull-gallery {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .pull-item {
+            width: 200px;
+            height: 200px;
+            border-radius: 10px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .pull-item:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 20px rgba(212, 175, 55, 0.3);
+        }
+
+        .pull-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .psychology-text {
+            font-size: 1.1rem;
+            line-height: 1.7;
+            margin: 2rem 0;
+            text-align: left;
+            background: rgba(212, 175, 55, 0.05);
+            padding: 1.5rem;
+            border-radius: 10px;
+            border-left: 4px solid var(--gold-primary);
+        }
+
+        /* Animations */
+        @keyframes floatLogo {
+            0%, 100% { transform: translateY(0px) rotateY(0deg); }
+            50% { transform: translateY(-10px) rotateY(10deg); }
+        }
+
+        @keyframes titleGlow {
+            0% { text-shadow: 0 0 50px rgba(212, 175, 55, 0.5); }
+            100% { text-shadow: 0 0 70px rgba(212, 175, 55, 0.8), 0 0 100px rgba(212, 175, 55, 0.4); }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero-title { font-size: 3rem; }
+            .nav-links { display: none; }
+            .roadmap::before { left: 2rem; }
+            .roadmap-item { width: calc(100% - 4rem); margin-left: 4rem; }
+            .roadmap-item:nth-child(odd) { padding-right: 0; padding-left: 3rem; }
+            .roadmap-item:nth-child(odd) .roadmarker { left: -10px; right: auto; }
+            .payment-numbers { flex-direction: column; gap: 1rem; }
+            .library-container { flex-direction: column; padding: 1rem; }
+            .library-sidebar { width: 100%; }
+            .documents-view { grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); }
+        }
+
+        /* Effets de particules */
+        #particles-js {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            z-index: -2;
+        }
+    </style>
+</head>
+<body>
+    <!-- Canvas 3D Background -->
+    <canvas id="three-bg"></canvas>
+    
+    <!-- Effets de particules -->
+    <div id="particles-js"></div>
+
+    <!-- Header Luxueux -->
+    <header class="luxury-header">
+        <div class="header-content">
+            <div class="logo-container">
+                <div class="logo-3d">
+                    <img src="https://labelprestige.github.io/LP.png" alt="Label Prestige" />
+                </div>
+                <div class="logo-text">LABEL PRESTIGE</div>
+            </div>
+            <nav>
+                <ul class="nav-links">
+                    <li><a href="#history">Histoire</a></li>
+                    <li><a href="#activities">Activités</a></li>
+                    <li><a href="#documents">Documents</a></li>
+                    <li><a href="#concours">Concours</a></li>
+                    <li><a href="#serment">Serment Techno</a></li>
+                    <li><a href="#suggestions">Suggestions</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Section Hero -->
+    <section class="hero-section">
+        <div class="hero-content">
+            <h1 class="hero-title">SITE OFFICIEL DU LABEL PRESTIGE</h1>
+            <p class="hero-subtitle">Association des Élèves Techno de l'INP-HB</p>
+            <button class="cta-button">Découvrir l'Association</button>
+        </div>
+    </section>
+
+    <!-- Section Histoire -->
+    <section id="history" class="section">
+        <h2 class="section-title">Notre Histoire</h2>
+        <div class="history-content">
+            <div class="history-text">
+                <p>Le Label Prestige est une association d'élèves techno de l'INP-HB fondée avec pour mission de rassembler, représenter et accompagner les étudiants technologiques dans leur parcours académique et professionnel.</p>
+                <p>Depuis sa création, l'association a su s'imposer comme un acteur majeur de la vie estudiantine à l'INP-HB, organisant des événements, des conférences et des activités qui renforcent la cohésion entre les étudiants et leur permettent de développer leurs compétences.</p>
+                <p>Notre vision est de créer une communauté solidaire où chaque étudiant techno peut s'épanouir, progresser et contribuer au rayonnement de notre école et de notre pays.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section Activités -->
+    <section id="activities" class="section activities-section">
+        <h2 class="section-title">Nos Activités</h2>
+        <div class="roadmap">
+            <!-- Activité 1 -->
+            <div class="roadmap-item">
+                <div class="roadmarker"></div>
+                <div class="roadmap-card">
+                    <div class="roadmap-date">Septembre 2025</div>
+                    <h3 class="roadmap-title">Rentrée Académique</h3>
+                    <p class="roadmap-description">Favoriser la cohésion et l'intégration des nouveaux étudiants.</p>
+                </div>
+            </div>
+
+            <!-- Activité 2 -->
+            <div class="roadmap-item">
+                <div class="roadmarker"></div>
+                <div class="roadmap-card">
+                    <div class="roadmap-date">8 Novembre 2025</div>
+                    <h3 class="roadmap-title">Réunion avec les P2</h3>
+                    <p class="roadmap-description">Échanges et coordination avec les étudiants de deuxième année.</p>
+                </div>
+            </div>
+
+            <!-- Activité 3 -->
+            <div class="roadmap-item">
+                <div class="roadmarker"></div>
+                <div class="roadmap-card future-activity">
+                    <div class="roadmap-date">29 Novembre 2025</div>
+                    <h3 class="roadmap-title">Otakunight</h3>
+                    <p class="roadmap-description">Soirée mangas, animés, J-pop. Valoriser la culture japonaise et geek, moment de détente.</p>
+                    <div class="activity-enigma">
+                        <div class="enigma-text">Η αλφαβήτα του μέλλοντος κρύβεται στο παρελθόν</div>
+                        <div class="enigma-hint">(L'alphabet du futur se cache dans le passé)</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Activité 4 -->
+            <div class="roadmap-item">
+                <div class="roadmarker"></div>
+                <div class="roadmap-card future-activity">
+                    <div class="roadmap-date">13 Décembre 2025</div>
+                    <h3 class="roadmap-title">Soirée ciné gratuite</h3>
+                    <p class="roadmap-description">Détente collective. Projecteur, film, chaises, collation payante.</p>
+                    <div class="activity-enigma">
+                        <div class="enigma-text">Ο χρόνος είναι το κλειδί για όλα τα μυστικά</div>
+                        <div class="enigma-hint">(Le temps est la clé de tous les secrets)</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Activité 5 -->
+            <div class="roadmap-item">
+                <div class="roadmarker"></div>
+                <div class="roadmap-card future-activity">
+                    <div class="roadmap-date">20 Décembre 2025</div>
+                    <h3 class="roadmap-title">Collecte de fonds</h3>
+                    <p class="roadmap-description">Action caritative pour des bénéficiaires choisis.</p>
+                    <div class="activity-enigma">
+                        <div class="enigma-text">Η σοφία έρχεται με την αλλαγή των εποχών</div>
+                        <div class="enigma-hint">(La sagesse vient avec le changement des saisons)</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Activité 6 -->
+            <div class="roadmap-item">
+                <div class="roadmarker"></div>
+                <div class="roadmap-card future-activity">
+                    <div class="roadmap-date">4 & 18 Janvier 2026</div>
+                    <h3 class="roadmap-title">Projection CAN</h3>
+                    <p class="roadmap-description">Créer une ambiance conviviale autour du sport.</p>
+                    <div class="activity-enigma">
+                        <div class="enigma-text">Η δύναμη βρίσκεται στην ενότητα</div>
+                        <div class="enigma-hint">(La force réside dans l'unité)</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Activité 7 -->
+            <div class="roadmap-item">
+                <div class="roadmarker"></div>
+                <div class="roadmap-card future-activity">
+                    <div class="roadmap-date">9 Janvier 2026</div>
+                    <h3 class="roadmap-title">AKWABA TECHNO (Bal de promo)</h3>
+                    <p class="roadmap-description">Accueillir la nouvelle promo et célébrer les réussites.</p>
+                    <div class="activity-enigma">
+                        <div class="enigma-text">Η γνώση είναι η μεγαλύτερη δύναμη</div>
+                        <div class="enigma-hint">(La connaissance est le plus grand pouvoir)</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Activité 8 -->
+            <div class="roadmap-item">
+                <div class="roadmarker"></div>
+                <div class="roadmap-card future-activity">
+                    <div class="roadmap-date">10 - 17 Janvier 2026</div>
+                    <h3 class="roadmap-title">Interclasses Techno</h3>
+                    <p class="roadmap-description">Renforcer l'esprit d'équipe et la compétition saine.</p>
+                    <div class="activity-enigma">
+                        <div class="enigma-text">Η νίκη ανήκει στους επιμένοντες</div>
+                        <div class="enigma-hint">(La victoire appartient à ceux qui persévèrent)</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section Base de Documents -->
+    <section id="documents" class="section">
+        <h2 class="section-title">Base de Documents</h2>
+        
+        <!-- Formulaire de connexion pour membres du bureau -->
+        <div class="login-form">
+            <h3 style="text-align: center; margin-bottom: 1.5rem; color: var(--gold-secondary);">Accès Membres du Bureau</h3>
+            <div class="form-group">
+                <label for="username">Nom d'utilisateur</label>
+                <input type="text" id="username" placeholder="Entrez votre nom d'utilisateur">
+            </div>
+            <div class="form-group">
+                <label for="password">Mot de passe</label>
+                <input type="password" id="password" placeholder="Entrez votre mot de passe">
+            </div>
+            <button class="cta-button" style="width: 100%;" id="login-button">Se connecter</button>
+            <p id="login-message" style="margin-top: 1rem; text-align: center; color: var(--gold-primary); display: none;"></p>
+        </div>
+
+        <div class="documents-grid">
+            <!-- 1ère Année -->
+            <div class="document-category" onclick="openLibrary('1ère Année')">
+                <h3 class="category-title">1ère Année</h3>
+                <ul class="subject-list">
+                    <li class="subject-item">Mathématiques</li>
+                    <li class="subject-item">Physique</li>
+                    <li class="subject-item">Chimie</li>
+                    <li class="subject-item">Science Industrielle</li>
+                    <li class="subject-item">Informatique</li>
+                </ul>
+            </div>
+
+            <!-- 2ème Année -->
+            <div class="document-category" onclick="openLibrary('2ème Année')">
+                <h3 class="category-title">2ème Année</h3>
+                <ul class="subject-list">
+                    <li class="subject-item">Mathématiques</li>
+                    <li class="subject-item">Physique</li>
+                    <li class="subject-item">Chimie</li>
+                    <li class="subject-item">Science Industrielle</li>
+                </ul>
+            </div>
+
+            <!-- Concours Spéciaux -->
+            <div class="document-category" onclick="openLibrary('Concours Spéciaux')">
+                <h3 class="category-title">Concours Spéciaux</h3>
+                <ul class="subject-list">
+                    <li class="subject-item">CCINP</li>
+                    <li class="subject-item">ISFA</li>
+                    <li class="subject-item">X Polytechnique</li>
+                    <li class="subject-item">École Centrale Casablanca</li>
+                    <li class="subject-item">Gbinzin</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- Interface Bibliothèque - Version améliorée -->
+    <div id="library-interface" class="library-interface">
+        <div class="library-container">
+            <!-- Sidebar avec arborescence -->
+            <div class="library-sidebar">
+                <h3 style="font-family: 'Cinzel', serif; color: var(--gold-secondary); margin-bottom: 1.5rem;">Bibliothèque Technique</h3>
+                
+                <div class="tree-view">
+                    <div class="tree-node">
+                        <div class="tree-folder active" onclick="toggleFolder(this)">
+                            <span>▶</span> 1ère Année
+                        </div>
+                        <div class="tree-children">
+                            <div class="tree-item active" onclick="selectItem(this, 'maths')">📚 Mathématiques</div>
+                            <div class="tree-item" onclick="selectItem(this, 'physique')">🔬 Physique</div>
+                            <div class="tree-item" onclick="selectItem(this, 'chimie')">🧪 Chimie</div>
+                            <div class="tree-item" onclick="selectItem(this, 'si')">⚙️ Sciences Industrielles</div>
+                            <div class="tree-item" onclick="selectItem(this, 'info')">💻 Informatique</div>
+                        </div>
+                    </div>
+                    
+                    <div class="tree-node">
+                        <div class="tree-folder" onclick="toggleFolder(this)">
+                            <span>▶</span> 2ème Année
+                        </div>
+                        <div class="tree-children">
+                            <div class="tree-item" onclick="selectItem(this, 'maths2')">📚 Mathématiques</div>
+                            <div class="tree-item" onclick="selectItem(this, 'physique2')">🔬 Physique</div>
+                            <div class="tree-item" onclick="selectItem(this, 'chimie2')">🧪 Chimie</div>
+                            <div class="tree-item" onclick="selectItem(this, 'si2')">⚙️ Sciences Industrielles</div>
+                        </div>
+                    </div>
+                    
+                    <div class="tree-node">
+                        <div class="tree-folder" onclick="toggleFolder(this)">
+                            <span>▶</span> Concours Spéciaux
+                        </div>
+                        <div class="tree-children">
+                            <div class="tree-item" onclick="selectItem(this, 'ccinp')">🏛️ CCINP</div>
+                            <div class="tree-item" onclick="selectItem(this, 'isfa')">💰 ISFA</div>
+                            <div class="tree-item" onclick="selectItem(this, 'x')">⚡ X Polytechnique</div>
+                            <div class="tree-item" onclick="selectItem(this, 'ecc')">🏰 École Centrale Casablanca</div>
+                            <div class="tree-item" onclick="selectItem(this, 'gbinzin')">🎯 Gbinzin</div>
+                        </div>
+                    </div>
+
+                    <!-- NOUVEAU : Section Suggestions pour les membres connectés -->
+                    <div class="tree-node" id="suggestions-tree-node" style="display: none;">
+                        <div class="tree-folder" onclick="toggleFolder(this)">
+                            <span>▶</span> Suggestions
+                        </div>
+                        <div class="tree-children">
+                            <div class="tree-item" onclick="selectItem(this, 'suggestions')">💡 Gestion des Suggestions</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section upload pour admin -->
+                <div id="upload-section" class="upload-section" style="display: none;">
+                    <h4 class="upload-title">📤 Téléverser un document</h4>
+                    <div class="upload-form">
+                        <input type="text" class="upload-input" id="doc-name" placeholder="Nom du document">
+                        <select class="upload-input" id="doc-category">
+                            <option value="">Sélectionner une catégorie</option>
+                            <option value="maths">Mathématiques</option>
+                            <option value="physique">Physique</option>
+                            <option value="chimie">Chimie</option>
+                            <option value="si">Sciences Industrielles</option>
+                            <option value="info">Informatique</option>
+                        </select>
+                        <select class="upload-input" id="doc-type">
+                            <option value="">Type de document</option>
+                            <option value="cours">Cours</option>
+                            <option value="td">TD</option>
+                            <option value="devoir">Devoir</option>
+                            <option value="correction">Correction</option>
+                            <option value="autre">Autre</option>
+                        </select>
+                        <select class="upload-input" id="doc-year">
+                            <option value="">Année</option>
+                            <option value="1A">1ère Année</option>
+                            <option value="2A">2ème Année</option>
+                            <option value="concours">Concours</option>
+                        </select>
+                        <input type="file" class="upload-input" id="doc-file">
+                        <button class="cta-button" style="padding: 0.8rem;" onclick="uploadDocument()">Téléverser</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Contenu principal -->
+            <div class="library-main">
+                <div class="library-header">
+                    <div>
+                        <h2 id="library-category" class="library-title">Bibliothèque Technique</h2>
+                        <div id="library-path" class="library-path">1ère Année / Mathématiques</div>
+                    </div>
+                    <button class="close-library" onclick="closeLibrary()">×</button>
+                </div>
+                
+                <div class="library-content">
+                    <div class="documents-view" id="documents-view">
+                        <!-- Les documents seront ajoutés dynamiquement ici -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- NOUVELLE SECTION : Suggestions -->
+    <section id="suggestions" class="section suggestions-section">
+        <h2 class="section-title">Boîte à Suggestions</h2>
+        
+        <div class="suggestions-container">
+            <!-- Formulaire de suggestion -->
+            <div class="suggestion-form-container">
+                <h3 class="suggestion-form-title">💡 Soumettre une Suggestion</h3>
+                <form class="suggestion-form" id="suggestion-form">
+                    <div class="form-group">
+                        <label for="suggestion-category">Catégorie</label>
+                        <select id="suggestion-category" class="form-control" required>
+                            <option value="">Choisir une catégorie</option>
+                            <option value="evenements">Événements & Activités</option>
+                            <option value="pedagogie">Pédagogie & Cours</option>
+                            <option value="infrastructure">Infrastructure & Équipements</option>
+                            <option value="communication">Communication & Réseaux sociaux</option>
+                            <option value="vie-associative">Vie Associative</option>
+                            <option value="autres">Autres</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="suggestion-title">Titre de la suggestion</label>
+                        <input type="text" id="suggestion-title" class="form-control" placeholder="Titre concis de votre suggestion" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="suggestion-content">Description détaillée</label>
+                        <textarea id="suggestion-content" class="form-control" placeholder="Décrivez votre suggestion en détail..." required></textarea>
+                    </div>
+                    
+                    <div class="preview-actions">
+                        <button type="button" class="btn btn-secondary" id="preview-btn">Aperçu</button>
+                        <button type="button" class="btn btn-primary" id="submit-btn">Soumettre la Suggestion</button>
+                    </div>
+                </form>
+            </div>
+            
+            <!-- Aperçu de la suggestion -->
+            <div class="suggestion-preview">
+                <h3 class="preview-title">👁️ Aperçu de votre Suggestion</h3>
+                <div class="preview-content" id="preview-content">
+                    <div class="preview-placeholder">
+                        Votre suggestion apparaîtra ici en temps réel
+                    </div>
+                </div>
+                <div class="preview-meta" id="preview-meta" style="display: none;">
+                    <span id="preview-date"></span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Tableau de bord pour les membres du bureau (visible uniquement après connexion) -->
+        <div id="suggestions-dashboard" class="suggestions-dashboard">
+            <div class="dashboard-header">
+                <h3 class="dashboard-title">📊 Tableau de Bord des Suggestions</h3>
+                <div class="dashboard-stats">
+                    <div class="stat-item">
+                        <div class="stat-value" id="total-suggestions">0</div>
+                        <div class="stat-label">Total</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="unread-suggestions">0</div>
+                        <div class="stat-label">Non lues</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="recent-suggestions">0</div>
+                        <div class="stat-label">7 derniers jours</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="suggestions-filters">
+                <button class="filter-btn active" data-filter="all">Toutes</button>
+                <button class="filter-btn" data-filter="unread">Non lues</button>
+                <button class="filter-btn" data-filter="evenements">Événements</button>
+                <button class="filter-btn" data-filter="pedagogie">Pédagogie</button>
+                <button class="filter-btn" data-filter="infrastructure">Infrastructure</button>
+                <button class="filter-btn" data-filter="communication">Communication</button>
+                <button class="filter-btn" data-filter="vie-associative">Vie Associative</button>
+                <button class="filter-btn" data-filter="autres">Autres</button>
+            </div>
+            
+            <div class="suggestions-list" id="suggestions-list">
+                <!-- Les suggestions seront chargées dynamiquement ici -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Section Concours -->
+    <section id="concours" class="section concours-section">
+        <h2 class="section-title">Concours</h2>
+        
+        <!-- Concours INP-HB (Gbinzin) -->
+        <div class="concours-category">
+            <h3 class="concours-title">CONCOURS INP-HB ("Gbinzin")</h3>
+            <div class="concours-grid">
+                <!-- GIC -->
+                <div class="concours-item">
+                    <div class="concours-header">
+                        <div class="concours-logo">
+                            <img src="https://tse4.mm.bing.net/th/id/OIP.25kIQh_Dw49xA0uSWKpxYAHaHZ?rs=1&pid=ImgDetMain&o=7&rm=3" alt="GIC">
+                        </div>
+                        <h4 class="concours-name">Concours GIC</h4>
+                    </div>
+                    <div class="concours-details">
+                        <span><b>École</b>: ESTP, ESPE</span>
+                        <span><b>Frais de concours</b>: 20.000 XOF</span>
+                        <span><b>Composition</b>: Écrit uniquement</span>
+                        <span><b>Matières de composition</b>: Mathématiques, Physiques-Chimie, Informatique, Sciences Industrielles, Français et Anglais</span>
+                        <span><b>Période de composition</b>: mi-Mai</span>
+                        <span><b>Annonce des résultats</b>: Juillet</span>
+                        <span><b>Description</b>: Mines, Pétrole, Bâtiment, Urbanisme... À la fin de votre cursus vous aurez toutes les capacités nécessaires pour intégrer le monde actif dans l'un de ces domaines.</span>
+                    </div>
+                </div>
+
+                <!-- CAE -->
+                <div class="concours-item">
+                    <div class="concours-header">
+                        <div class="concours-logo">
+                            <img src="https://tse4.mm.bing.net/th/id/OIP.25kIQh_Dw49xA0uSWKpxYAHaHZ?rs=1&pid=ImgDetMain&o=7&rm=3" alt="CAE">
+                        </div>
+                        <h4 class="concours-name">Concours CAE</h4>
+                    </div>
+                    <div class="concours-details">
+                        <span><b>École</b>: ESCAE</span>
+                        <span><b>Filières</b>: HEA et ILT</span>
+                        <span><b>Frais de concours</b>: 20.000 XOF</span>
+                        <span><b>Composition</b>: Écrit uniquement</span>
+                        <span><b>Matières de composition</b>: Mathématiques, Français et Anglais</span>
+                        <span><b>Période de composition</b>: mi-Mai</span>
+                        <span><b>Annonce des résultats</b>: Juillet</span>
+                        <span><b>Description</b>: Bien qu'étant étudiants technos vous aussi avez la possibilité bien que vous n'ayez pas forçément des notions en économie d'intégrer l'ESCAE tout comme un ECS.</span>
+                    </div>
+                </div>
+
+                <!-- A2GP -->
+                <div class="concours-item">
+                    <div class="concours-header">
+                        <div class="concours-logo">
+                            <img src="https://tse4.mm.bing.net/th/id/OIP.25kIQh_Dw49xA0uSWKpxYAHaHZ?rs=1&pid=ImgDetMain&o=7&rm=3" alt="A2GP">
+                        </div>
+                        <h4 class="concours-name">Concours A2GP</h4>
+                    </div>
+                    <div class="concours-details">
+                        <span><b>École</b>: ESMG, ESA</span>
+                        <span><b>Filière</b>: Agronomie, Mines, Pétrole</span>
+                        <span><b>Frais de concours</b>: 20.000 XOF</span>
+                        <span><b>Composition</b>: Écrit uniquement</span>
+                        <span><b>Matières de composition</b>: Mathematiques, Physique, Chimie, Informatique, Français, Anglais</span>
+                        <span><b>Période de composition</b>: mi-Mai</span>
+                        <span><b>Annonce des résultats</b>: Juillet</span>
+                    </div>
+                </div>
+
+                <!-- STIC -->
+                <div class="concours-item">
+                    <div class="concours-header">
+                        <div class="concours-logo">
+                            <img src="https://tse4.mm.bing.net/th/id/OIP.25kIQh_Dw49xA0uSWKpxYAHaHZ?rs=1&pid=ImgDetMain&o=7&rm=3" alt="STIC">
+                        </div>
+                        <h4 class="concours-name">Concours STIC</h4>
+                    </div>
+                    <div class="concours-details">
+                        <span><b>Ecole</b>: ESI</span>
+                        <span><b>Filière</b>: STIC (Sciences et Technologies de l'Information et de la Communication)</span>
+                        <span><b>Frais de concours</b>: 20.000 XOF</span>
+                        <span><b>Composition</b>: Ecrit uniquement</span>
+                        <span><b>Matières de composition</b>: Mathématiques, Physiques, Informatique, Sciences Industrielles, Français et Anglais</span>
+                        <span><b>Période de composition</b>: mi-Mai</span>
+                        <span><b>Annonce des résultats</b>: Juillet</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Concours Extérieurs -->
+        <div class="concours-category">
+            <h3 class="concours-title">CONCOURS ÉXTERIEUR</h3>
+            <div class="concours-grid">
+                <!-- ISE-ECO -->
+                <div class="concours-item">
+                    <div class="concours-header">
+                        <div class="concours-logo">
+                            <div style="width: 80px; height: 80px; background: var(--gold-primary); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;">ISE</div>
+                        </div>
+                        <h4 class="concours-name">Concours ISE-ECO</h4>
+                    </div>
+                    <div class="concours-details">
+                        <span><b>Composition</b>: Ecrit uniquement</span>
+                        <span><b>Frais de concours</b>: 10.000 XOF</span>
+                        <span><b>Matières de composition</b>: Mathématiques et Français</span>
+                        <span><b>Période de composition</b>: Début Avril</span>
+                        <span><b>Annonce de résultats</b>: Fin Juin</span>
+                        <span><b>Description</b>: L'actuariat, l'économie ou encore les statistiques. Si l'un de ces domaines vous intéressent, le concours ISE-ECO (option Mathématiques) de l'ENSEA est une belle opportunité qui s'offre à vous. Toutefois, Il va falloir s'y connaitre en series de Fourier...</span>
+                    </div>
+                </div>
+
+                <!-- ECC -->
+                <div class="concours-item">
+                    <div class="concours-header">
+                        <div class="concours-logo">
+                            <div style="width: 80px; height: 80px; background: var(--gold-primary); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;">ECC</div>
+                        </div>
+                        <h4 class="concours-name">Concours ECC</h4>
+                    </div>
+                    <div class="concours-details">
+                        <span><b>Composition</b>: Etude de dossiers, Ecrit et Entretien de motivation</span>
+                        <span><b>Frais de concours</b>: 12.000 XOF</span>
+                        <span><b>Matières de composition</b>: Mathématiques, Physiques et Anglais</span>
+                        <span><b>Période de composition</b>: Mai</span>
+                        <span><b>Annonce de résultats</b>: Juin</span>
+                        <span><b>Description</b>: École Centrale Casablanca (ECC Casablanca), est une école d'ingénieurs doté d'une pédagogie innovante, de formations pluridisciplinaires et d'une grande ouverture au monde. L'École Centrale Casablanca est la première école d'ingénieurs généraliste du Maroc.</span>
+                    </div>
+                </div>
+
+                <!-- CCINP -->
+                <div class="concours-item">
+                    <div class="concours-header">
+                        <div class="concours-logo">
+                            <div style="width: 80px; height: 80px; background: var(--gold-primary); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;">CCINP</div>
+                        </div>
+                        <h4 class="concours-name">CCINP</h4>
+                    </div>
+                    <div class="concours-details">
+                        <span><b>Écoles</b>: Plus de trente écoles font partie du concours CCINP</span>
+                        <span><b>Composition</b>: Écrit et Oral</span>
+                        <span><b>Frais de concours</b>: 220€</span>
+                        <span><b>Matières de composition</b>: Toutes les matières au programme</span>
+                        <span><b>Période de composition</b>: Mai</span>
+                        <span><b>Lieu de composition</b>: INP-HB et Oral à Paris</span>
+                        <span><b>Annonce de résultats</b>: Juin</span>
+                        <span><b>Description</b>: Le concours commun INP (CCINP) rassemble 32 écoles d'ingénieurs spécialisées en aéronautique, chimie, en environnement, ou même en mécanique. Vous y trouverez votre compte...</span>
+                    </div>
+                </div>
+
+                <!-- X Polytechnique -->
+                <div class="concours-item">
+                    <div class="concours-header">
+                        <div class="concours-logo">
+                            <div style="width: 80px; height: 80px; background: var(--gold-primary); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;">X</div>
+                        </div>
+                        <h4 class="concours-name">FUI-FF</h4>
+                    </div>
+                    <div class="concours-details">
+                        <span><b>École</b>: X-Polytechnique de Paris</span>
+                        <span><b>Composition</b>: Écrit, Oral et Entretien de motivation</span>
+                        <span><b>Frais de concours</b>: Gratuit jusqu'à nouvel ordre</span>
+                        <span><b>Matières de composition</b>: Mathématiques, Physiques, Anglais et Français</span>
+                        <span><b>Période de composition</b>: Début Mars</span>
+                        <span><b>Annonce de résultats</b>: Avril/Mai</span>
+                        <span><b>Description</b>: Soro Tiena , Yeo Nibé (Meilleur Etudiant de Cote D'Ivoire), Toni Nelson, Akpalé Espoir. Tous ces étudiants ont pas plus tard que l'année dernière eu la chance de franchir les portes de l'école polytechnique. Vous avez toutes vos chances. Dès maintenant, mettez vous au travail, vous serez la fierté de votre famille, de l'INP-HB et de toute la nation ivoirienne.</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section Serment Techno -->
+    <section id="serment" class="section">
+        <h2 class="section-title">Serment Techno</h2>
+        <div class="serment-content">
+            <h3 style="margin-bottom: 2rem; color: var(--gold-secondary);">HONORE TON ENGAGEMENT</h3>
+            
+            <div class="psychology-text">
+                <p><strong>Rejoins l'élite des Technos</strong> - En accomplissant ton Serment Techno, tu intègres officiellement la communauté prestigieuse des étudiants techno de l'INP-HB. Ce n'est pas une simple cotisation, c'est un rite de passage qui marque ton appartenance à une famille d'excellence.</p>
+                
+                <p><strong>Investis dans ton avenir</strong> - Chaque franc contribue directement à ton succès académique et professionnel. Ateliers de préparation aux concours, ressources pédagogiques exclusives, réseautage avec les anciens - ton Serment Techno est le meilleur investissement que tu puisses faire pour ta carrière.</p>
+                
+                <p><strong>Sois reconnu et respecté</strong> - Porte fièrement les couleurs du Label Prestige. Ton pull exclusif est bien plus qu'un vêtement - c'est un symbole d'appartenance qui te distinguera sur le campus et au-delà.</p>
+                
+                <p><strong>Ne sois pas celui qui manque à l'appel</strong> - Tous tes camarades ont déjà honoré leur engagement. Ne reste pas en marge de cette dynamique collective qui propulse notre communauté vers l'excellence.</p>
+            </div>
+
+            <div class="payment-info">
+                <p>Effectue ton Serment Techno par Wave, Orange Money ou MTN Mobile Money :</p>
+                <div class="payment-numbers">
+                    <div class="payment-number">+225 0712344296</div>
+                    <div class="payment-number">+225 0710019161</div>
+                </div>
+                <p style="margin-top: 1.5rem; font-style: italic; color: var(--gold-primary);">"L'excellence n'est pas un acte, mais une habitude. Ton Serment Techno en est la première expression."</p>
+            </div>
+
+            <div>
+                <h3 style="margin: 2rem 0; color: var(--gold-secondary);">Honore ton Serment et reçois ton pull exclusif</h3>
+                <div class="pull-gallery">
+                    <div class="pull-item">
+                        <img src="https://via.placeholder.com/200x200/0A0A0A/D4AF37?text=Pull+Label+Prestige" alt="Pull Label Prestige">
+                    </div>
+                    <div class="pull-item">
+                        <img src="https://via.placeholder.com/200x200/0A0A0A/D4AF37?text=Pull+Exclusif" alt="Pull Label Prestige">
+                    </div>
+                    <div class="pull-item">
+                        <img src="https://via.placeholder.com/200x200/0A0A0A/D4AF37?text=Style+Techno" alt="Pull Label Prestige">
+                    </div>
+                    <div class="pull-item">
+                        <img src="https://via.placeholder.com/200x200/0A0A0A/D4AF37?text=Élégance" alt="Pull Label Prestige">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        // Configuration Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyAUx0wQoKCPlaS1Hc0S0d4mjx9q9GS6uMU",
+            authDomain: "label-76667.firebaseapp.com",
+            projectId: "label-76667",
+            storageBucket: "label-76667.firebasestorage.app",
+            messagingSenderId: "474172605762",
+            appId: "1:474172605762:web:22065ac87044ef028f34db",
+            measurementId: "G-JBCLL2HFJ4"
+        };
+
+        // Initialisation Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        const storage = firebase.storage();
+
+        // État de connexion
+        let isLoggedIn = false;
+        let currentUser = null;
+        
+        // Références aux collections Firestore
+        const documentsRef = db.collection("documents");
+        const suggestionsRef = db.collection("suggestions");
+        
+        // Configuration des identifiants
+        const memberCredentials = {
+            "JohannaMab": "Mundziola24INP00470",
+            "GillesAlle": "Patrik24INP00162",
+            "AlHassaneF": "Fofana24INP00586",
+            "AngeAllou": "Ulrich24INP00164",
+            "PrinceSok": "Sokora24INP00841",
+            "AudeDjez": "Djezou24INP00242",
+            "AbdulCoul": "Kader24INP00375",
+            "RichardDad": "Dadie24INP00385",
+            "JoseKoke": "Koke24INP00514",
+            "FionaKon": "Konan24INP00150",
+            "JeanMartial": "Affi24INP00293",
+            "EtokaguyB": "Bobge24INP00511",
+            "AboKonan": "Konan24INP00182",
+            "HenochAdin": "Adingra24INP00420",
+            "AnneLaurence": "Agbassi24INP00382",
+            "AstridNgue": "BadY24INPP1141",
+            "LeilaMeit": "Meite24INP00287",
+            "GedeonKou": "Kouame24INP00471",
+            "OthnielWon": "Wonlet24INP00840",
+            "MelvinBog": "Bogni24INP00184",
+            "YedidyaKon": "Konan24INP00594",
+            "YvanGnal": "Gnaly24INP00238",
+            "AngelaSok": "Sokoury24INP00660",
+            "DylanYaba": "Yaba24INP00636",
+            "AdjaTour": "Toure24INP00610"
+        };
+
+        // Écouteurs d'événements pour la connexion
+        document.addEventListener('DOMContentLoaded', function() {
+            const loginButton = document.getElementById('login-button');
+            if (loginButton) {
+                loginButton.addEventListener('click', checkLogin);
+            }
+            
+            const passwordInput = document.getElementById('password');
+            if (passwordInput) {
+                passwordInput.addEventListener('keypress', function(event) {
+                    if (event.key === 'Enter') {
+                        checkLogin();
+                    }
+                });
+            }
+            
+            // Initialiser Three.js
+            initThreeJS();
+            
+            // Initialiser les particules
+            initParticles();
+            
+            // Initialiser les animations GSAP
+            initAnimations();
+            
+            // Initialiser le système de suggestions
+            initSuggestions();
+        });
+
+        function checkLogin() {
+            console.log("Tentative de connexion...");
+            
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const message = document.getElementById('login-message');
+
+            if (!username || !password) {
+                message.textContent = "Veuillez remplir tous les champs.";
+                message.style.color = "#ff6b6b";
+                message.style.display = "block";
+                return;
+            }
+
+            if (memberCredentials[username] && memberCredentials[username] === password) {
+                isLoggedIn = true;
+                currentUser = username;
+                message.textContent = "Connexion réussie ! Accès aux fonctionnalités administrateur activé.";
+                message.style.color = "var(--gold-primary)";
+                message.style.display = "block";
+                
+                // Afficher la section upload
+                document.getElementById('upload-section').style.display = 'block';
+                
+                // Afficher la section suggestions dans l'arborescence
+                document.getElementById('suggestions-tree-node').style.display = 'block';
+                
+                // Afficher le tableau de bord des suggestions
+                document.getElementById('suggestions-dashboard').style.display = 'block';
+                
+                // Mettre à jour les statistiques des suggestions
+                updateSuggestionsStats();
+                
+                // Charger les suggestions
+                loadSuggestions('all');
+                
+                // Supprimer le flou des activités pour les membres connectés
+                document.querySelectorAll('.future-activity').forEach(activity => {
+                    activity.classList.remove('future-activity');
+                    activity.querySelector('.activity-enigma').style.display = 'none';
+                });
+                
+                setTimeout(() => {
+                    alert(`Bienvenue ${username} dans l'espace administrateur du Label Prestige!`);
+                }, 1000);
+            } else {
+                message.textContent = "Identifiants incorrects. Accès réservé aux membres du bureau.";
+                message.style.color = "#ff6b6b";
+                message.style.display = "block";
+                document.getElementById('password').value = '';
+            }
+        }
+
+        // Initialisation Three.js pour le fond 3D
+        function initThreeJS() {
+            const scene = new THREE.Scene();
+            const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('three-bg'), alpha: true });
+            
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+            
+            // Créer des particules dorées
+            const particlesGeometry = new THREE.BufferGeometry();
+            const particlesCount = 5000;
+            const posArray = new Float32Array(particlesCount * 3);
+            
+            for(let i = 0; i < particlesCount * 3; i++) {
+                posArray[i] = (Math.random() - 0.5) * 50;
+            }
+            
+            particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+            
+            const particlesMaterial = new THREE.PointsMaterial({
+                size: 0.02,
+                color: new THREE.Color(0xD4AF37),
+                transparent: true,
+                opacity: 0.8
+            });
+            
+            const particlesMesh = new THREE.Points(particlesGeometry, particlesMaterial);
+            scene.add(particlesMesh);
+            
+            camera.position.z = 5;
+            
+            // Animation
+            function animate() {
+                requestAnimationFrame(animate);
+                particlesMesh.rotation.x += 0.001;
+                particlesMesh.rotation.y += 0.002;
+                renderer.render(scene, camera);
+            }
+            
+            animate();
+            
+            // Redimensionnement
+            window.addEventListener('resize', () => {
+                camera.aspect = window.innerWidth / window.innerHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(window.innerWidth, window.innerHeight);
+            });
+        }
+
+        // Configuration des particules JS
+        function initParticles() {
+            particlesJS('particles-js', {
+                particles: {
+                    number: { value: 100, density: { enable: true, value_area: 800 } },
+                    color: { value: "#D4AF37" },
+                    shape: { type: "circle" },
+                    opacity: { value: 0.5, random: true },
+                    size: { value: 3, random: true },
+                    line_linked: {
+                        enable: true,
+                        distance: 150,
+                        color: "#D4AF37",
+                        opacity: 0.2,
+                        width: 1
+                    },
+                    move: {
+                        enable: true,
+                        speed: 2,
+                        direction: "none",
+                        random: true,
+                        straight: false,
+                        out_mode: "out",
+                        bounce: false
+                    }
+                },
+                interactivity: {
+                    detect_on: "canvas",
+                    events: {
+                        onhover: { enable: true, mode: "repulse" },
+                        onclick: { enable: true, mode: "push" },
+                        resize: true
+                    }
+                }
+            });
+        }
+
+        // Animations GSAP
+        function initAnimations() {
+            gsap.registerPlugin(ScrollTrigger);
+            
+            gsap.from('.hero-title', {
+                duration: 2,
+                y: 100,
+                opacity: 0,
+                ease: "power3.out"
+            });
+            
+            gsap.from('.roadmap-item', {
+                scrollTrigger: {
+                    trigger: '.activities-section',
+                    start: 'top 80%'
+                },
+                y: 100,
+                opacity: 0,
+                duration: 1,
+                stagger: 0.2,
+                ease: "power3.out"
+            });
+        }
+
+        // Interface Bibliothèque
+        function openLibrary(category) {
+            document.getElementById('library-interface').style.display = 'block';
+            document.body.style.overflow = 'hidden';
+            
+            // Afficher la section upload pour les membres connectés
+            if (isLoggedIn) {
+                document.getElementById('upload-section').style.display = 'block';
+                document.getElementById('suggestions-tree-node').style.display = 'block';
+            } else {
+                document.getElementById('upload-section').style.display = 'none';
+                document.getElementById('suggestions-tree-node').style.display = 'none';
+            }
+            
+            // Charger les documents par défaut
+            loadDocuments('maths');
+        }
+
+        function closeLibrary() {
+            document.getElementById('library-interface').style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+
+        function toggleFolder(element) {
+            // Fermer tous les dossiers sauf celui cliqué
+            document.querySelectorAll('.tree-folder').forEach(folder => {
+                if (folder !== element) {
+                    folder.classList.remove('active');
+                }
+            });
+            
+            // Basculer l'état du dossier cliqué
+            element.classList.toggle('active');
+        }
+
+        function selectItem(element, category) {
+            // Désélectionner tous les éléments
+            document.querySelectorAll('.tree-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            
+            // Sélectionner l'élément cliqué
+            element.classList.add('active');
+            
+            // Mettre à jour le chemin
+            const parentFolder = element.closest('.tree-node').querySelector('.tree-folder');
+            const path = parentFolder.textContent.trim() + ' / ' + element.textContent.trim();
+            document.getElementById('library-path').textContent = path;
+            
+            // Charger les documents correspondants
+            if (category === 'suggestions') {
+                loadSuggestionsDashboard();
+            } else {
+                loadDocuments(category);
+            }
+        }
+
+        // ==================== GESTION DES DOCUMENTS AVEC FIREBASE ====================
+
+        async function loadDocuments(category) {
+            const documentsView = document.getElementById('documents-view');
+            documentsView.innerHTML = '<div style="text-align: center; padding: 2rem; color: var(--text-secondary);">Chargement des documents...</div>';
+            
+            try {
+                // Récupérer les documents depuis Firestore
+                const querySnapshot = await documentsRef
+                    .where("category", "==", category)
+                    .orderBy("uploadDate", "desc")
+                    .get();
+                
+                const filteredDocs = [];
+                querySnapshot.forEach(doc => {
+                    filteredDocs.push({ id: doc.id, ...doc.data() });
+                });
+                
+                documentsView.innerHTML = '';
+                
+                if (filteredDocs.length === 0) {
+                    documentsView.innerHTML = `
+                        <div style="text-align: center; padding: 3rem; color: var(--text-secondary);">
+                            <div style="font-size: 4rem; margin-bottom: 1rem;">📚</div>
+                            <h3 style="font-family: 'Cinzel', serif; color: var(--gold-secondary); margin-bottom: 1rem;">Aucun document disponible</h3>
+                            <p>Les membres du bureau n'ont pas encore téléversé de documents pour cette catégorie.</p>
+                            ${isLoggedIn ? '<p style="margin-top: 1rem;">Vous pouvez être le premier à ajouter un document!</p>' : ''}
+                        </div>
+                    `;
+                    return;
+                }
+                
+                filteredDocs.forEach(doc => {
+                    const docCard = document.createElement('div');
+                    docCard.className = 'document-card';
+                    docCard.innerHTML = `
+                        <div class="document-icon">${getIconForType(doc.type)}</div>
+                        <h3 class="document-name">${doc.name}</h3>
+                        <div class="document-meta">
+                            <span>${doc.type.toUpperCase()}</span>
+                            <span>${doc.size}</span>
+                        </div>
+                        <p class="document-description">${doc.description || 'Document partagé par ' + doc.uploader}</p>
+                        <div class="document-actions">
+                            <button class="doc-btn primary" onclick="downloadDocument('${doc.id}', '${doc.name}')">📥 Télécharger</button>
+                            ${isLoggedIn ? `<button class="doc-btn" onclick="deleteDocument('${doc.id}')">🗑️ Supprimer</button>` : ''}
+                        </div>
+                    `;
+                    documentsView.appendChild(docCard);
+                });
+            } catch (error) {
+                console.error("Erreur lors du chargement des documents:", error);
+                documentsView.innerHTML = `
+                    <div style="text-align: center; padding: 3rem; color: #ff6b6b;">
+                        <div style="font-size: 4rem; margin-bottom: 1rem;">❌</div>
+                        <h3 style="font-family: 'Cinzel', serif; margin-bottom: 1rem;">Erreur de chargement</h3>
+                        <p>Impossible de charger les documents. Vérifiez votre connexion internet.</p>
+                    </div>
+                `;
+            }
+        }
+
+        async function uploadDocument() {
+            if (!isLoggedIn) {
+                alert("Vous devez être connecté pour téléverser un document.");
+                return;
+            }
+            
+            const docName = document.getElementById('doc-name').value;
+            const docCategory = document.getElementById('doc-category').value;
+            const docType = document.getElementById('doc-type').value;
+            const docYear = document.getElementById('doc-year').value;
+            const docFile = document.getElementById('doc-file').files[0];
+            
+            if (!docName || !docCategory || !docType || !docYear || !docFile) {
+                alert("Veuillez remplir tous les champs et sélectionner un fichier");
+                return;
+            }
+            
+            try {
+                // Afficher un indicateur de progression
+                const uploadBtn = document.querySelector('#upload-section .cta-button');
+                const originalText = uploadBtn.textContent;
+                uploadBtn.textContent = 'Téléversement en cours...';
+                uploadBtn.disabled = true;
+                
+                // Téléverser le fichier dans Firebase Storage
+                const fileRef = storage.ref().child(`documents/${Date.now()}_${docFile.name}`);
+                const snapshot = await fileRef.put(docFile);
+                const downloadURL = await snapshot.ref.getDownloadURL();
+                
+                // Créer un nouvel objet document pour Firestore
+                const newDoc = {
+                    name: docName,
+                    category: docCategory,
+                    type: docType,
+                    year: docYear,
+                    size: formatFileSize(docFile.size),
+                    uploader: currentUser,
+                    uploadDate: firebase.firestore.FieldValue.serverTimestamp(),
+                    fileName: docFile.name,
+                    fileURL: downloadURL
+                };
+                
+                // Ajouter le document à Firestore
+                await documentsRef.add(newDoc);
+                
+                // Réinitialiser le formulaire
+                document.getElementById('doc-name').value = '';
+                document.getElementById('doc-category').value = '';
+                document.getElementById('doc-type').value = '';
+                document.getElementById('doc-year').value = '';
+                document.getElementById('doc-file').value = '';
+                
+                // Recharger les documents pour voir le nouveau
+                await loadDocuments(docCategory);
+                
+                // Afficher un message de succès
+                showSuccessMessage(`Document "${docName}" téléversé avec succès!`);
+                
+            } catch (error) {
+                console.error("Erreur lors du téléversement:", error);
+                alert("Erreur lors du téléversement du document: " + error.message);
+            } finally {
+                // Réactiver le bouton
+                const uploadBtn = document.querySelector('#upload-section .cta-button');
+                uploadBtn.textContent = originalText;
+                uploadBtn.disabled = false;
+            }
+        }
+
+        async function downloadDocument(docId, docName) {
+            try {
+                // Récupérer les informations du document depuis Firestore
+                const docSnapshot = await documentsRef.doc(docId).get();
+                if (!docSnapshot.exists) {
+                    alert("Document non trouvé");
+                    return;
+                }
+                
+                const docData = docSnapshot.data();
+                
+                // Télécharger le fichier depuis l'URL stockée
+                const response = await fetch(docData.fileURL);
+                const blob = await response.blob();
+                
+                // Créer un lien de téléchargement
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = docData.fileName || docName;
+                document.body.appendChild(a);
+                a.click();
+                window.URL.revokeObjectURL(url);
+                document.body.removeChild(a);
+                
+            } catch (error) {
+                console.error("Erreur lors du téléchargement:", error);
+                alert("Erreur lors du téléchargement du document: " + error.message);
+            }
+        }
+
+        async function deleteDocument(docId) {
+            if (!isLoggedIn) {
+                alert("Vous devez être connecté pour supprimer un document.");
+                return;
+            }
+            
+            if (!confirm("Êtes-vous sûr de vouloir supprimer ce document ?")) {
+                return;
+            }
+            
+            try {
+                // Récupérer les informations du document pour supprimer le fichier de Storage
+                const docSnapshot = await documentsRef.doc(docId).get();
+                if (docSnapshot.exists) {
+                    const docData = docSnapshot.data();
+                    
+                    // Supprimer le fichier de Firebase Storage
+                    if (docData.fileURL) {
+                        const fileRef = storage.refFromURL(docData.fileURL);
+                        await fileRef.delete();
+                    }
+                    
+                    // Supprimer le document de Firestore
+                    await documentsRef.doc(docId).delete();
+                    
+                    // Recharger les documents
+                    const currentCategory = document.querySelector('.tree-item.active').getAttribute('onclick').match(/'([^']+)'/)[1];
+                    await loadDocuments(currentCategory);
+                    
+                    showSuccessMessage("Document supprimé avec succès!");
+                }
+            } catch (error) {
+                console.error("Erreur lors de la suppression:", error);
+                alert("Erreur lors de la suppression du document: " + error.message);
+            }
+        }
+
+        function getIconForType(type) {
+            const icons = {
+                'cours': '📚',
+                'td': '📝',
+                'devoir': '📋',
+                'correction': '✅',
+                'autre': '📄'
+            };
+            return icons[type] || '📄';
+        }
+
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+
+        // ==================== GESTION DES SUGGESTIONS AVEC FIREBASE ====================
+
+        function initSuggestions() {
+            // Écouteur pour le bouton d'aperçu
+            const previewBtn = document.getElementById('preview-btn');
+            if (previewBtn) {
+                previewBtn.addEventListener('click', updatePreview);
+            }
+            
+            // Écouteur pour le bouton de soumission
+            const submitBtn = document.getElementById('submit-btn');
+            if (submitBtn) {
+                submitBtn.addEventListener('click', submitSuggestion);
+            }
+            
+            // Écouteurs pour les champs du formulaire (mise à jour en temps réel)
+            const formInputs = document.querySelectorAll('#suggestion-form input, #suggestion-form select, #suggestion-form textarea');
+            formInputs.forEach(input => {
+                input.addEventListener('input', updatePreview);
+            });
+            
+            // Écouteurs pour les filtres
+            const filterBtns = document.querySelectorAll('.filter-btn');
+            filterBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    // Retirer la classe active de tous les boutons
+                    filterBtns.forEach(b => b.classList.remove('active'));
+                    // Ajouter la classe active au bouton cliqué
+                    this.classList.add('active');
+                    // Charger les suggestions avec le filtre sélectionné
+                    loadSuggestions(this.getAttribute('data-filter'));
+                });
+            });
+        }
+
+        function updatePreview() {
+            const category = document.getElementById('suggestion-category').value;
+            const title = document.getElementById('suggestion-title').value;
+            const content = document.getElementById('suggestion-content').value;
+            
+            const previewContent = document.getElementById('preview-content');
+            const previewMeta = document.getElementById('preview-meta');
+            const previewDate = document.getElementById('preview-date');
+            
+            if (!title || !content) {
+                previewContent.innerHTML = '<div class="preview-placeholder">Votre suggestion apparaîtra ici en temps réel</div>';
+                previewMeta.style.display = 'none';
+                return;
+            }
+            
+            // Mettre à jour le contenu de l'aperçu
+            const categoryLabels = {
+                'evenements': 'Événements & Activités',
+                'pedagogie': 'Pédagogie & Cours',
+                'infrastructure': 'Infrastructure & Équipements',
+                'communication': 'Communication & Réseaux sociaux',
+                'vie-associative': 'Vie Associative',
+                'autres': 'Autres'
+            };
+            
+            previewContent.innerHTML = `
+                <div class="suggestion-category">${categoryLabels[category] || 'Non spécifié'}</div>
+                <h4 style="margin-bottom: 1rem; color: var(--gold-secondary);">${title}</h4>
+                <div class="suggestion-content">${content.replace(/\n/g, '<br>')}</div>
+            `;
+            
+            // Mettre à jour les métadonnées
+            previewDate.textContent = new Date().toLocaleDateString('fr-FR');
+            previewMeta.style.display = 'flex';
+        }
+
+        async function submitSuggestion() {
+            const category = document.getElementById('suggestion-category').value;
+            const title = document.getElementById('suggestion-title').value;
+            const content = document.getElementById('suggestion-content').value;
+            
+            if (!category || !title || !content) {
+                alert('Veuillez remplir tous les champs du formulaire.');
+                return;
+            }
+            
+            try {
+                // Afficher un indicateur de progression
+                const submitBtn = document.getElementById('submit-btn');
+                const originalText = submitBtn.textContent;
+                submitBtn.textContent = 'Envoi en cours...';
+                submitBtn.disabled = true;
+                
+                // Créer un nouvel objet suggestion pour Firestore
+                const newSuggestion = {
+                    category: category,
+                    title: title,
+                    content: content,
+                    date: firebase.firestore.FieldValue.serverTimestamp(),
+                    read: false
+                };
+                
+                // Ajouter à Firestore
+                await suggestionsRef.add(newSuggestion);
+                
+                // Réinitialiser le formulaire
+                document.getElementById('suggestion-form').reset();
+                document.getElementById('preview-content').innerHTML = '<div class="preview-placeholder">Votre suggestion apparaîtra ici en temps réel</div>';
+                document.getElementById('preview-meta').style.display = 'none';
+                
+                // Afficher un message de confirmation
+                showSuccessMessage('Votre suggestion a été soumise avec succès ! Merci pour votre contribution.');
+                
+                // Mettre à jour les statistiques si un membre est connecté
+                if (isLoggedIn) {
+                    await updateSuggestionsStats();
+                    await loadSuggestions('all');
+                }
+                
+            } catch (error) {
+                console.error("Erreur lors de l'envoi de la suggestion:", error);
+                alert("Erreur lors de l'envoi de la suggestion: " + error.message);
+            } finally {
+                // Réactiver le bouton
+                const submitBtn = document.getElementById('submit-btn');
+                submitBtn.textContent = originalText;
+                submitBtn.disabled = false;
+            }
+        }
+
+        async function loadSuggestions(filter = 'all') {
+            if (!isLoggedIn) return;
+            
+            const suggestionsList = document.getElementById('suggestions-list');
+            suggestionsList.innerHTML = '<div style="text-align: center; padding: 2rem; color: var(--text-secondary);">Chargement des suggestions...</div>';
+            
+            try {
+                let query = suggestionsRef.orderBy("date", "desc");
+                
+                // Appliquer le filtre
+                if (filter === 'unread') {
+                    query = query.where("read", "==", false);
+                } else if (filter !== 'all') {
+                    query = query.where("category", "==", filter);
+                }
+                
+                const querySnapshot = await query.get();
+                const filteredSuggestions = [];
+                
+                querySnapshot.forEach(doc => {
+                    filteredSuggestions.push({ id: doc.id, ...doc.data() });
+                });
+                
+                suggestionsList.innerHTML = '';
+                
+                if (filteredSuggestions.length === 0) {
+                    suggestionsList.innerHTML = `
+                        <div class="empty-state">
+                            <div class="empty-state-icon">💭</div>
+                            <h3>Aucune suggestion</h3>
+                            <p>Aucune suggestion ne correspond aux critères sélectionnés.</p>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                // Afficher les suggestions
+                filteredSuggestions.forEach(suggestion => {
+                    const suggestionItem = document.createElement('div');
+                    suggestionItem.className = `suggestion-item ${suggestion.read ? '' : 'unread'}`;
+                    
+                    const categoryLabels = {
+                        'evenements': 'Événements & Activités',
+                        'pedagogie': 'Pédagogie & Cours',
+                        'infrastructure': 'Infrastructure & Équipements',
+                        'communication': 'Communication & Réseaux sociaux',
+                        'vie-associative': 'Vie Associative',
+                        'autres': 'Autres'
+                    };
+                    
+                    // Formater la date
+                    const date = suggestion.date ? 
+                        suggestion.date.toDate().toLocaleDateString('fr-FR') : 
+                        'Date inconnue';
+                    
+                    suggestionItem.innerHTML = `
+                        <div class="suggestion-header">
+                            <div class="suggestion-date">${date}</div>
+                        </div>
+                        <div class="suggestion-category">${categoryLabels[suggestion.category] || 'Non spécifié'}</div>
+                        <h4 style="margin-bottom: 0.5rem; color: var(--gold-secondary);">${suggestion.title}</h4>
+                        <div class="suggestion-content">${suggestion.content.replace(/\n/g, '<br>')}</div>
+                        <div class="suggestion-actions">
+                            ${!suggestion.read ? `<button class="action-btn mark-read" onclick="markSuggestionAsRead('${suggestion.id}')">✓ Marquer comme lu</button>` : ''}
+                            <button class="action-btn delete" onclick="deleteSuggestion('${suggestion.id}')">🗑️ Supprimer</button>
+                        </div>
+                    `;
+                    
+                    suggestionsList.appendChild(suggestionItem);
+                });
+            } catch (error) {
+                console.error("Erreur lors du chargement des suggestions:", error);
+                suggestionsList.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">❌</div>
+                        <h3>Erreur de chargement</h3>
+                        <p>Impossible de charger les suggestions. Vérifiez votre connexion internet.</p>
+                    </div>
+                `;
+            }
+        }
+
+        async function updateSuggestionsStats() {
+            if (!isLoggedIn) return;
+            
+            try {
+                // Récupérer toutes les suggestions
+                const allSuggestionsSnapshot = await suggestionsRef.get();
+                const allSuggestions = [];
+                allSuggestionsSnapshot.forEach(doc => {
+                    allSuggestions.push({ id: doc.id, ...doc.data() });
+                });
+                
+                const total = allSuggestions.length;
+                const unread = allSuggestions.filter(s => !s.read).length;
+                
+                // Calculer les suggestions des 7 derniers jours
+                const oneWeekAgo = new Date();
+                oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+                const recent = allSuggestions.filter(s => {
+                    const suggestionDate = s.date ? s.date.toDate() : new Date(0);
+                    return suggestionDate >= oneWeekAgo;
+                }).length;
+                
+                // Mettre à jour les statistiques dans le tableau de bord principal
+                document.getElementById('total-suggestions').textContent = total;
+                document.getElementById('unread-suggestions').textContent = unread;
+                document.getElementById('recent-suggestions').textContent = recent;
+                
+                // Mettre à jour les statistiques dans la bibliothèque
+                if (document.getElementById('lib-total-suggestions')) {
+                    document.getElementById('lib-total-suggestions').textContent = total;
+                    document.getElementById('lib-unread-suggestions').textContent = unread;
+                    document.getElementById('lib-recent-suggestions').textContent = recent;
+                }
+            } catch (error) {
+                console.error("Erreur lors de la mise à jour des statistiques:", error);
+            }
+        }
+
+        async function markSuggestionAsRead(suggestionId) {
+            try {
+                await suggestionsRef.doc(suggestionId).update({
+                    read: true
+                });
+                
+                // Mettre à jour l'affichage
+                await updateSuggestionsStats();
+                await loadSuggestions('all');
+                
+                // Si on est dans la bibliothèque, mettre à jour aussi
+                if (document.getElementById('library-suggestions-list')) {
+                    await loadLibrarySuggestions('all');
+                }
+                
+            } catch (error) {
+                console.error("Erreur lors du marquage de la suggestion:", error);
+                alert("Erreur lors du marquage de la suggestion: " + error.message);
+            }
+        }
+
+        async function deleteSuggestion(suggestionId) {
+            if (!confirm("Êtes-vous sûr de vouloir supprimer cette suggestion ?")) {
+                return;
+            }
+            
+            try {
+                await suggestionsRef.doc(suggestionId).delete();
+                
+                // Mettre à jour l'affichage
+                await updateSuggestionsStats();
+                await loadSuggestions('all');
+                
+                // Si on est dans la bibliothèque, mettre à jour aussi
+                if (document.getElementById('library-suggestions-list')) {
+                    await loadLibrarySuggestions('all');
+                }
+                
+                showSuccessMessage("Suggestion supprimée avec succès!");
+            } catch (error) {
+                console.error("Erreur lors de la suppression de la suggestion:", error);
+                alert("Erreur lors de la suppression de la suggestion: " + error.message);
+            }
+        }
+
+        // Fonctions auxiliaires pour les messages de succès
+        function showSuccessMessage(message) {
+            // Créer un élément de message
+            const messageElement = document.createElement('div');
+            messageElement.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: var(--gold-primary);
+                color: white;
+                padding: 1rem 1.5rem;
+                border-radius: 8px;
+                box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+                z-index: 10000;
+                font-weight: 600;
+                animation: slideIn 0.3s ease-out;
+            `;
+            messageElement.textContent = message;
+            
+            // Ajouter l'élément au body
+            document.body.appendChild(messageElement);
+            
+            // Supprimer le message après 3 secondes
+            setTimeout(() => {
+                messageElement.style.animation = 'slideOut 0.3s ease-in';
+                setTimeout(() => {
+                    document.body.removeChild(messageElement);
+                }, 300);
+            }, 3000);
+            
+            // Ajouter les animations CSS
+            if (!document.querySelector('#message-animations')) {
+                const style = document.createElement('style');
+                style.id = 'message-animations';
+                style.textContent = `
+                    @keyframes slideIn {
+                        from { transform: translateX(100%); opacity: 0; }
+                        to { transform: translateX(0); opacity: 1; }
+                    }
+                    @keyframes slideOut {
+                        from { transform: translateX(0); opacity: 1; }
+                        to { transform: translateX(100%); opacity: 0; }
+                    }
+                `;
+                document.head.appendChild(style);
+            }
+        }
+
+        // Initialiser la bibliothèque avec des documents par défaut
+        loadDocuments('maths');
+    </script>
+</body>
+</html>
