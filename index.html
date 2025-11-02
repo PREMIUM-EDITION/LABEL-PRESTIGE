@@ -1962,7 +1962,13 @@
         };
 
         // Initialisation Firebase
-        firebase.initializeApp(firebaseConfig);
+        try {
+            firebase.initializeApp(firebaseConfig);
+            console.log("Firebase initialisé avec succès");
+        } catch (error) {
+            console.error("Erreur d'initialisation Firebase:", error);
+        }
+
         const db = firebase.firestore();
         const storage = firebase.storage();
 
@@ -2087,113 +2093,125 @@
 
         // Initialisation Three.js pour le fond 3D
         function initThreeJS() {
-            const scene = new THREE.Scene();
-            const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-            const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('three-bg'), alpha: true });
-            
-            renderer.setSize(window.innerWidth, window.innerHeight);
-            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-            
-            // Créer des particules dorées
-            const particlesGeometry = new THREE.BufferGeometry();
-            const particlesCount = 5000;
-            const posArray = new Float32Array(particlesCount * 3);
-            
-            for(let i = 0; i < particlesCount * 3; i++) {
-                posArray[i] = (Math.random() - 0.5) * 50;
-            }
-            
-            particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
-            
-            const particlesMaterial = new THREE.PointsMaterial({
-                size: 0.02,
-                color: new THREE.Color(0xD4AF37),
-                transparent: true,
-                opacity: 0.8
-            });
-            
-            const particlesMesh = new THREE.Points(particlesGeometry, particlesMaterial);
-            scene.add(particlesMesh);
-            
-            camera.position.z = 5;
-            
-            // Animation
-            function animate() {
-                requestAnimationFrame(animate);
-                particlesMesh.rotation.x += 0.001;
-                particlesMesh.rotation.y += 0.002;
-                renderer.render(scene, camera);
-            }
-            
-            animate();
-            
-            // Redimensionnement
-            window.addEventListener('resize', () => {
-                camera.aspect = window.innerWidth / window.innerHeight;
-                camera.updateProjectionMatrix();
+            try {
+                const scene = new THREE.Scene();
+                const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+                const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('three-bg'), alpha: true });
+                
                 renderer.setSize(window.innerWidth, window.innerHeight);
-            });
+                renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+                
+                // Créer des particules dorées
+                const particlesGeometry = new THREE.BufferGeometry();
+                const particlesCount = 5000;
+                const posArray = new Float32Array(particlesCount * 3);
+                
+                for(let i = 0; i < particlesCount * 3; i++) {
+                    posArray[i] = (Math.random() - 0.5) * 50;
+                }
+                
+                particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+                
+                const particlesMaterial = new THREE.PointsMaterial({
+                    size: 0.02,
+                    color: new THREE.Color(0xD4AF37),
+                    transparent: true,
+                    opacity: 0.8
+                });
+                
+                const particlesMesh = new THREE.Points(particlesGeometry, particlesMaterial);
+                scene.add(particlesMesh);
+                
+                camera.position.z = 5;
+                
+                // Animation
+                function animate() {
+                    requestAnimationFrame(animate);
+                    particlesMesh.rotation.x += 0.001;
+                    particlesMesh.rotation.y += 0.002;
+                    renderer.render(scene, camera);
+                }
+                
+                animate();
+                
+                // Redimensionnement
+                window.addEventListener('resize', () => {
+                    camera.aspect = window.innerWidth / window.innerHeight;
+                    camera.updateProjectionMatrix();
+                    renderer.setSize(window.innerWidth, window.innerHeight);
+                });
+            } catch (error) {
+                console.error("Erreur Three.js:", error);
+            }
         }
 
         // Configuration des particules JS
         function initParticles() {
-            particlesJS('particles-js', {
-                particles: {
-                    number: { value: 100, density: { enable: true, value_area: 800 } },
-                    color: { value: "#D4AF37" },
-                    shape: { type: "circle" },
-                    opacity: { value: 0.5, random: true },
-                    size: { value: 3, random: true },
-                    line_linked: {
-                        enable: true,
-                        distance: 150,
-                        color: "#D4AF37",
-                        opacity: 0.2,
-                        width: 1
+            try {
+                particlesJS('particles-js', {
+                    particles: {
+                        number: { value: 100, density: { enable: true, value_area: 800 } },
+                        color: { value: "#D4AF37" },
+                        shape: { type: "circle" },
+                        opacity: { value: 0.5, random: true },
+                        size: { value: 3, random: true },
+                        line_linked: {
+                            enable: true,
+                            distance: 150,
+                            color: "#D4AF37",
+                            opacity: 0.2,
+                            width: 1
+                        },
+                        move: {
+                            enable: true,
+                            speed: 2,
+                            direction: "none",
+                            random: true,
+                            straight: false,
+                            out_mode: "out",
+                            bounce: false
+                        }
                     },
-                    move: {
-                        enable: true,
-                        speed: 2,
-                        direction: "none",
-                        random: true,
-                        straight: false,
-                        out_mode: "out",
-                        bounce: false
+                    interactivity: {
+                        detect_on: "canvas",
+                        events: {
+                            onhover: { enable: true, mode: "repulse" },
+                            onclick: { enable: true, mode: "push" },
+                            resize: true
+                        }
                     }
-                },
-                interactivity: {
-                    detect_on: "canvas",
-                    events: {
-                        onhover: { enable: true, mode: "repulse" },
-                        onclick: { enable: true, mode: "push" },
-                        resize: true
-                    }
-                }
-            });
+                });
+            } catch (error) {
+                console.error("Erreur particules:", error);
+            }
         }
 
         // Animations GSAP
         function initAnimations() {
-            gsap.registerPlugin(ScrollTrigger);
-            
-            gsap.from('.hero-title', {
-                duration: 2,
-                y: 100,
-                opacity: 0,
-                ease: "power3.out"
-            });
-            
-            gsap.from('.roadmap-item', {
-                scrollTrigger: {
-                    trigger: '.activities-section',
-                    start: 'top 80%'
-                },
-                y: 100,
-                opacity: 0,
-                duration: 1,
-                stagger: 0.2,
-                ease: "power3.out"
-            });
+            try {
+                gsap.registerPlugin(ScrollTrigger);
+                
+                gsap.from('.hero-title', {
+                    duration: 2,
+                    y: 100,
+                    opacity: 0,
+                    ease: "power3.out"
+                });
+                
+                gsap.from('.roadmap-item', {
+                    scrollTrigger: {
+                        trigger: '.activities-section',
+                        start: 'top 80%'
+                    },
+                    y: 100,
+                    opacity: 0,
+                    duration: 1,
+                    stagger: 0.2,
+                    ease: "power3.out"
+                });
+            } catch (error) {
+                console.error("Erreur GSAP:", error);
+            }
         }
 
         // Interface Bibliothèque
